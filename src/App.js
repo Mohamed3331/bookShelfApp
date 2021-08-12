@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react'
+import * as BooksAPI from './BooksAPI'
+import './App.css'
+import MainPage from './Pages/MainPage'
+import AddBookPage from './Pages/AddBookPage'
+import { BrowserRouter, Route, Switch} from 'react-router-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function BooksApp () {
+  const [books, setBooks] = useState([])
+
+  const getData = () => {
+    BooksAPI.getAll().then((result) => {
+      setBooks(result)
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.books !== this.state.books) {
+  //     BooksAPI.getAll().then((result) => {
+  //       this.setState({books: result})
+  //     }).catch((error) => {
+  //       console.log(error);
+  //     })
+  //   }
+  // }
+    return (
+      <React.Fragment>
+      <div className="app">
+         <BrowserRouter>
+            <Switch> 
+              <Route exact path="/">
+                <MainPage Books={books} getData={getData} /> 
+              </Route> 
+              <Route exact path="/search"> 
+                <AddBookPage Books={books} getData={getData}/> 
+              </Route> 
+          </Switch>
+         </BrowserRouter> 
+      </div>
+      </React.Fragment>
+    )
 }
 
-export default App;
+export default BooksApp
